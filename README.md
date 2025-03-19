@@ -28,13 +28,15 @@ Before you begin, ensure you have the following:
 ### 3. **Docker**
    - **Docker** must be installed on your local machine to build and push container images. Follow [Docker Installation](https://docs.docker.com/get-docker/) for setup.
 
-### 4. **Docker Hub or Private Container Registry**
-   - A **Docker Hub** account or a private container registry (such as **Google Container Registry**, **AWS ECR**, etc.) to host your Docker images.
-   - Ensure your account is logged in:
+### 4. **Docker Hub, AWS ECR, Digital Ocean registry or other Private Container Registry**
+   - A **Docker Hub** is a free to play platform to host your Docker images.
+   - Digital Ocean Container Registry is free to 500Mb(only one repository allowed)
 
-     ```bash
-     docker login
-     ```
+   Links for registration:
+   https://www.docker.com/products/docker-hub/
+   https://www.digitalocean.com/products/container-registry
+   https://aws.amazon.com/ecr/
+   
 
 ### 5. **doctl** 
   - Install and configure **doctl** on your machine to interact with the Digital Ocean cloud.
