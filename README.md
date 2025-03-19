@@ -33,9 +33,9 @@ Before you begin, ensure you have the following:
    - Digital Ocean Container Registry is free to 500Mb(only one repository allowed)
 
    Links for registration:
-   https://www.docker.com/products/docker-hub/
-   https://www.digitalocean.com/products/container-registry
-   https://aws.amazon.com/ecr/
+   - https://www.docker.com/products/docker-hub/
+   - https://www.digitalocean.com/products/container-registry
+   - https://aws.amazon.com/ecr/
    
 
 ### 5. **doctl** 
