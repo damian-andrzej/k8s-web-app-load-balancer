@@ -73,6 +73,51 @@ If you haven't created a Kubernetes cluster yet on DigitalOcean, follow the step
 
 - **Create a Kubernetes Cluster on DigitalOcean**: 
   Go to the [DigitalOcean Kubernetes Setup](https://www.digitalocean.com/docs/kubernetes/quickstart/) page and follow the instructions to create a cluster.
+
+If GUI installation is not enought for you, here i prepared a script that automates the process
+
+```bash
+#!/bin/bash
+
+# Variables
+CLUSTER_NAME="randomname"       # Set your cluster name
+REGION="fra1"                       # Change to your desired region (e.g., nyc3, sfo3, ams3, etc.)
+NODE_SIZE="s-2vcpu-4gb"             # Change to the desired node size
+NODE_COUNT=3                        # Number of nodes in your cluster
+K8S_VERSION="latest"                # You can specify the version if needed (e.g., 1.21.5-do.1)
+DOCKER_VERSION="latest"             # Docker version for the nodes
+SSH_KEY_PATH="~/.ssh/id_rsa.pub"    # Path to your SSH public key (used for the nodes)
+
+# Create a Kubernetes Cluster
+echo "Creating Kubernetes cluster in region: $REGION"
+doctl kubernetes cluster create $CLUSTER_NAME \
+  --region $REGION \
+  --size $NODE_SIZE \
+  --node-count $NODE_COUNT \
+  --version $K8S_VERSION \
+  --ssh-keys $(cat $SSH_KEY_PATH) \
+  --tag $CLUSTER_NAME
+
+# Check if the cluster creation is successful
+if [ $? -eq 0 ]; then
+  echo "Kubernetes cluster '$CLUSTER_NAME' created successfully!"
+else
+  echo "Failed to create Kubernetes cluster."
+  exit 1
+fi
+
+# Wait for the Kubernetes cluster to be provisioned (it may take a few minutes)
+echo "Waiting for the Kubernetes cluster to be ready..."
+sleep 60  # You can increase this depending on how long it takes for your cluster to be ready
+
+# Get the kubeconfig file for the newly created cluster
+echo "Configuring kubectl to use the newly created cluster..."
+doctl kubernetes cluster kubeconfig save $CLUSTER_NAME
+
+# Verify kubectl configuration
+kubectl get nodes
+
+```
   
 - **Access the Cluster**:
   After the cluster is set up, you'll need to configure `kubectl` to access your cluster. Follow these instructions to download the kubeconfig file and set it up:
