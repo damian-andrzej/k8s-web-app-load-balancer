@@ -74,7 +74,7 @@ If you haven't created a Kubernetes cluster yet on DigitalOcean, follow the step
 - **Create a Kubernetes Cluster on DigitalOcean**: 
   Go to the [DigitalOcean Kubernetes Setup](https://www.digitalocean.com/docs/kubernetes/quickstart/) page and follow the instructions to create a cluster.
 
-If GUI installation is not enought for you, here i prepared a script that automates the process
+If GUI installation is not enough for you, here i prepared a script that automates the process
 
 ```bash
 #!/bin/bash
