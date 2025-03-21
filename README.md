@@ -5,7 +5,7 @@ Cloud K8s cluster setup and application deployment exposed to internet by load b
 
 ## Overview
 
-This repository demonstrates how to deploy a **web application** to a **DigitalOcean Kubernetes (DO K8s)** cluster and expose it to external traffic using a **Load Balancer**. It uses a simple **Flask** app (Python) as the example application, but you can adapt the template to any web application framework.
+This repository demonstrates how to deploy a **web application** to a **DigitalOcean Kubernetes (DO K8s)** cluster and expose it to external traffic using a **Load Balancer**. It uses a simple **Flask** app (Python) as the example application, lets adapt the template to any web application framework.
 
 ---
 
