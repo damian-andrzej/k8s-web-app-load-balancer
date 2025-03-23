@@ -125,3 +125,24 @@ kubectl get nodes
   ```bash
   doctl kubernetes cluster kubeconfig save <your-cluster-name>
   ```
+
+## Helm package
+
+/// short description of helm 
+Lets deploy a dedicated package for our application
+```bash
+helm create flask-postgres-package
+cd flask-postgres-package
+```
+
+Here what we recieve 
+///image helm-dir.png
+
+values.yaml : define your Python app configurations (image, replicas, environment variables, etc.).
+templates : stores your yaml config files (deployment,services, ingres etc)
+
+so we simply move configuration files stored in k8s/ folder to templates, then we are able to run our application by one helm cmd
+
+```bash
+helm install package-name
+```
