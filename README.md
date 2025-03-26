@@ -128,7 +128,7 @@ kubectl get nodes
 
 ## Helm package
 
-/// short description of helm 
+Helm is a package manager for Kubernetes that simplifies application deployment, management, and versioning using reusable configuration templates called charts. It streamlines Kubernetes operations by enabling users to define, install, and upgrade applications efficiently.
 Lets deploy a dedicated package for our application
 ```bash
 helm create flask-postgres-package
@@ -136,7 +136,9 @@ cd flask-postgres-package
 ```
 
 Here what we recieve 
-///image helm-dir.png
+
+![Alt text](images/helm-dir.png)
+
 
 values.yaml : define your Python app configurations (image, replicas, environment variables, etc.).
 templates : stores your yaml config files (deployment,services, ingres etc)
@@ -146,3 +148,122 @@ so we simply move configuration files stored in k8s/ folder to templates, then w
 ```bash
 helm install package-name
 ```
+
+## LoadBalancer vs Nginx Ingress
+
+**LB How It Works**
+Creates an external load balancer in your cloud provider (e.g., AWS ELB, Google Cloud Load Balancer, DigitalOcean Load Balanser).
+
+Directly forwards traffic to the Flask app’s Kubernetes service.
+
+Suitable for single-service applications.
+
+**Ingress**
+Routes traffic to multiple services based on hostname (flask.example.com) or path (/api/).
+
+Uses a single external LoadBalancer (saves cost).
+
+Requires an Ingress Controller (e.g., Nginx Ingress) to manage traffic.
+
+Summary: If you are able to configure a bit its no-brainer to use nginx. Its free and provide more options but i will show you configs for both options
+
+### 1. LoadBalancer setup
+
+As mentioned its very simple, we use cloud provider so its Digital Ocean internal loadbalancer. Below you see settings and cost for one node
+
+![Alt text](images/load-balancer.png)
+
+To provision it we need following service:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-service
+spec:
+  selector:
+    app: flask-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: LoadBalancer
+```
+
+### 2. Nginx Ingress
+
+installation by helm
+
+```bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx  ## add the repo
+helm repo update ## update the repo
+helm install nginx-ingress ingress-nginx/ingress-nginx --create-namespace --namespace ingress-nginx ## installation
+
+
+```
+
+Then adjust ingress file to your deployment, here an example :
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      containers:
+      - name: flask
+        image: my-flask-app:latest  # Replace with your Flask Docker image
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-service
+spec:
+  selector:
+    app: flask-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+  type: ClusterIP
+```
+Most important line is **metadata: name: flask-service** by this selector we gonna attach ingress to the service, look at ingress file :
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flask-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: flask.example.com  # Replace with your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: flask-service
+            port:
+              number: 80
+```
+
+if you use helm for app deployment, you must add ingress.yaml file to helm-chart/templates folder
+
+
+
+
+
